@@ -1,4 +1,6 @@
-https = require('https');
+const https = require('https');
+const nano = require('nano')('http://admin:password@localhost:5984');
+
 
 const username = 'root';
 const password = 'password';
@@ -31,3 +33,5 @@ proxmoxLogin.on(
 );
 
 proxmoxLogin.end();
+
+const nano = require('nano')('http://admin:password@localhost:5984');
