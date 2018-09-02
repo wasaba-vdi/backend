@@ -1,14 +1,33 @@
-const http = require('http');
+https = require('https');
 
-const hostname = '127.0.0.1';
-const port = 3000;
+const username = 'root';
+const password = 'password';
 
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World\n');
-});
+proxmoxLogin = https.request(
+	{
+		hostname: '192.168.30.2',
+		port: '8006',
+		path: '/api2/json/access/ticket?username=root@pam&password=password',
+		method :'POST',
+		rejectUnauthorized: false
+	},
+	
+	(res) => {
+			console.log('statusCode:', res.statusCode);
+			console.log('headers:', res.headers);
+			res.on('data', (d) =>
+				{
+					process.stdout.write(d);
+				}
+			);
+	}
+);
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+proxmoxLogin.on(
+	'error',
+	(e) => {
+		console.error(e);
+	}
+);
+
+proxmoxLogin.end();
