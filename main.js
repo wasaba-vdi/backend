@@ -1,25 +1,39 @@
-const https = require('https');
+//Connecting to the database, these details will be gotten from environmental variables.
+//TODO
+
+const couchdb_username = 'admin';
+const couchdb_password = 'password';
+
 const nano = require('nano')('http://admin:password@localhost:5984');
 
+//Settings that should be gotten from the database.
+//TODO
 
-const username = 'root';
-const password = 'password';
+const proxmox_hostname = '192.168.30.2'
+const proxmox_port = '8006';
+const proxomox_username = 'root@pam';
+const proxmox_password = 'password';
+const proxmox_reject_unauthorised = false;
+
+
+//Logging into proxmox.
+proxmox_token = null;
+const https = require('https');
 
 proxmoxLogin = https.request(
 	{
-		hostname: '192.168.30.2',
-		port: '8006',
+		hostname: proxmox_hostname,
+		port: proxmox_port,
 		path: '/api2/json/access/ticket?username=root@pam&password=password',
 		method :'POST',
-		rejectUnauthorized: false
+		rejectUnauthorized: proxmox_reject_unauthorised
 	},
-	
 	(res) => {
-			console.log('statusCode:', res.statusCode);
-			console.log('headers:', res.headers);
-			res.on('data', (d) =>
+			res.on(
+			'data', 
+			(data) =>
 				{
-					process.stdout.write(d);
+					proxmox_token = JSON.parse(data).data.CSRFPreventionToken;
 				}
 			);
 	}
@@ -33,5 +47,3 @@ proxmoxLogin.on(
 );
 
 proxmoxLogin.end();
-
-const nano = require('nano')('http://admin:password@localhost:5984');
